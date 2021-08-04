@@ -2,12 +2,14 @@ from django.db import models
 
 class Product(models.Model):
     name          = models.CharField(max_length=50)
+    sub_name      = models.CharField(max_length=100)
     cooking_time  = models.PositiveSmallIntegerField()
-    price         = models.DecimalField(decimal_places=2)
-    type          = models.ForeignKey('Type', on_delete=models.CASCADE, related_name='type')
+    price         = models.DecimalField(max_digits=12 ,decimal_places=2)
+    type          = models.ForeignKey('Type', on_delete=models.CASCADE)
     sales         = models.PositiveIntegerField()
     stock         = models.PositiveIntegerField()
     created_at    = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         db_table = 'products'
@@ -23,7 +25,6 @@ class Type(models.Model):
 
 class Taste(models.Model):
     name    = models.CharField(max_length=30)
-    product = models.ManyToManyField('Product', related_name='taste')
 
     class Meta:
         db_table = 'tastes'
@@ -31,9 +32,17 @@ class Taste(models.Model):
     def __str__(self):
         return self.name
 
+class ProductTaste(models.Model):
+    product = models.ForeignKey('Product',on_delete=models.CASCADE)
+    taste   = models.ForeignKey('Taste', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'product_tastes'
+
+
 class Image(models.Model):
     image_url = models.URLField()
-    product   = models.ForeignKey('Product',on_delete=models.CASCADE, related_name='image')
+    product   = models.ForeignKey('Product',on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'images'
@@ -41,7 +50,7 @@ class Image(models.Model):
 class Description(models.Model):
     image_url  = models.URLField()
     text       = models.TextField(max_length=1000)
-    product    = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='description')
+    product    = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'descriptions'
