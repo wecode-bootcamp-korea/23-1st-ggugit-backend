@@ -12,7 +12,6 @@ class ProductView(View):
 		try:
 
 			products = Product.objects.all()
-			results = []
 
 			filter_taste = {
 				1 : '매콤한맛',
