@@ -10,7 +10,6 @@ class ProductView(View):
 		order  = request.GET.get('order',1)
 		try:
 			products = Product.objects.all()
-			results = []
 
 			filter_taste = {
 				1 : '매콤한맛',
