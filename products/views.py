@@ -1,7 +1,8 @@
-from django.http  	 import JsonResponse
-from django.views  	 import View
+from django.http  	 		import JsonResponse
+from django.views  	 		import View
+from django.core.exceptions import ObjectDoesNotExist
 
-from products.models import Product, Type, Taste
+from products.models 		import Product, Type, Taste
 
 class ProductView(View):
 	def get(self, request):
@@ -53,20 +54,23 @@ class ProductView(View):
 
 class ProductDetailView(View):
     def get(self, request, product):
-
-        product 	 = Product.objects.get(id=product)
-        images 		 = product.image_set.all()
-        descriptions = product.description_set.all()
-        tastes 		 = product.taste_set.all()
-		
-        results = [{
-            'name'		   : product.name,
-            'sub_name'	   : product.sub_name,
-            'price'		   : product.price,
-            'cooking_time' : product.cooking_time,
-            'image'		   : [product.image_url for product in images],
-            'description'  :[{'description_image': product.image_url for product in descriptions},
-                           	 {'text': product.text for product in descriptions}],
-            'taste' 	   : [product.name for product in tastes]
-        }]
+        try:
+            product 	 = Product.objects.get(id=product)
+            images 		 = product.image_set.all()
+            descriptions = product.description_set.all()
+            tastes 		 = product.taste_set.all()
+    
+            results = [{
+                'name'		   : product.name,
+                'sub_name'	   : product.sub_name,
+                'price'		   : round(product.price),
+                'discount'     : round(int(product.price)* 0.9),
+                'cooking_time' : product.cooking_time,
+                'image'		   : [product.image_url for product in images],
+                'description'  :[{'description_image': product.image_url for product in descriptions},
+                               	 {'description_text': product.text for product in descriptions}],
+                'taste' 	   : [product.name for product in tastes],
+            }]
+        except ObjectDoesNotExist:
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
         return JsonResponse({'result': results}, status=200)
