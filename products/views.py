@@ -5,12 +5,10 @@ from products.models import Product, Type, Taste
 
 class ProductView(View):
 	def get(self, request):
-		
-		theme  = request.GET.get('theme',None) #type or taste
+		theme  = request.GET.get('theme', None) #type or taste
 		number = request.GET.get('number',1)
 		order  = request.GET.get('order',1)
 		try:
-
 			products = Product.objects.all()
 			results = []
 
