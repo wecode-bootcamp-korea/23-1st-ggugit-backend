@@ -1,8 +1,13 @@
 from django.db       import models
+<<<<<<< HEAD
 
 from users.models    import User
 from products.models import Product
     
+=======
+from products.models import Product
+from users.models    import User
+>>>>>>> a7cceedbbb27dea648dc0c2368dd33366330582d
 
 class Review(models.Model):
     user      = models.ForeignKey(User,on_delete=models.CASCADE)

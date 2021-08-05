@@ -17,5 +17,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('users', include('users.urls')),
+<<<<<<< HEAD
     path('products', include('products.urls')),
+=======
+>>>>>>> a7cceedbbb27dea648dc0c2368dd33366330582d
 ]

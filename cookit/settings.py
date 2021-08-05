@@ -55,6 +55,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+
+
 ROOT_URLCONF = 'cookit.urls'
 
 TEMPLATES = [
