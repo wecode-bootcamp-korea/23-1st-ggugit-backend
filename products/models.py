@@ -10,7 +10,6 @@ class Product(models.Model):
     stock         = models.PositiveIntegerField()
     created_at    = models.DateTimeField(auto_now_add=True)
     
-
     class Meta:
         db_table = 'products'
     
@@ -25,6 +24,7 @@ class Type(models.Model):
 
 class Taste(models.Model):
     name    = models.CharField(max_length=30)
+    product = models.ManyToManyField('Product', through='ProductTaste')
 
     class Meta:
         db_table = 'tastes'
