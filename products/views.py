@@ -1,5 +1,5 @@
-from django.http import JsonResponse
-from django.views import View
+from django.http  	 import JsonResponse
+from django.views  	 import View
 
 from products.models import Product, Type, Taste
 
@@ -10,7 +10,6 @@ class ProductView(View):
 		order  = request.GET.get('order',1)
 		try:
 			products = Product.objects.all()
-
 			filter_taste = {
 				1 : '매콤한맛',
 				2 : '짭짤한맛',
@@ -37,7 +36,6 @@ class ProductView(View):
 			if theme == 'type':
 				type 	  = Type.objects.get(name=filter_type[int(number)])
 				products = Product.objects.filter(type=type)
-
 			products = products.order_by(order_number[int(order)])
 			results = [{
 				'id' 		   : product.id,
@@ -53,13 +51,22 @@ class ProductView(View):
 			return JsonResponse({'message':'KEY_ERROR'}, status = 400)
 		return JsonResponse({'results':results}, status=200)
 
+class ProductDetailView(View):
+    def get(self, request, product):
 
-
-
-
-
-
-
-
-
-        
+        product 	 = Product.objects.get(id=product)
+        images 		 = product.image_set.all()
+        descriptions = product.description_set.all()
+        tastes 		 = product.taste_set.all()
+		
+        results = [{
+            'name'		   : product.name,
+            'sub_name'	   : product.sub_name,
+            'price'		   : product.price,
+            'cooking_time' : product.cooking_time,
+            'image'		   : [product.image_url for product in images],
+            'description'  :[{'description_image': product.image_url for product in descriptions},
+                           	 {'text': product.text for product in descriptions}],
+            'taste' 	   : [product.name for product in tastes]
+        }]
+        return JsonResponse({'result': results}, status=200)
