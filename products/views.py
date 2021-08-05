@@ -73,6 +73,7 @@ class ProductDetailView(View):
                 'image'        :[product.image_url for product in images],
                 'description'  :[{'description_image' : product.image_url for product in descriptions},
                                  {'text' : product.text for product in descriptions}],
+				#'taste'		   : product.taste_set.get(product=product),
             }]
         return JsonResponse({'result':result}, status = 200)
 
