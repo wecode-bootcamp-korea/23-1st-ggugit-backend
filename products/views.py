@@ -131,6 +131,7 @@ class ProductView(View):
 
 class ProductDetailView(View):
     def get(self, request, product):
+<<<<<<< HEAD
         if Product.objects.filter(id=product).exists():
 <<<<<<< HEAD
             product      = Product.objects.get(id=product)
@@ -153,7 +154,11 @@ class ProductDetailView(View):
         return JsonResponse({'message':'KEY_ERROR'}, status=400)
 >>>>>>> c8a3d8e (Add: productdetail views2)
 =======
+=======
+        if not Product.objects.filter(id=product).exists():
+>>>>>>> a0369f0 (Add: productdetail views작성4)
             return JsonResponse({'message':'NOT_FOUND'}, status=404)
+        
         product      = Product.objects.get(id=product)
         images       = product.image_set.all()
         descriptions = product.description_set.all()
