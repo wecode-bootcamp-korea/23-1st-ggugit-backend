@@ -19,6 +19,10 @@ urlpatterns = [
     path('users', include('users.urls')),
 <<<<<<< HEAD
     path('products', include('products.urls')),
+<<<<<<< HEAD
 =======
 >>>>>>> a7cceedbbb27dea648dc0c2368dd33366330582d
+=======
+    path('orders', include('orders.urls'))
+>>>>>>> f0f0025 (Add : 장바구니 기능 추가, (CREATE, READ))
 ]
