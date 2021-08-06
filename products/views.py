@@ -54,8 +54,9 @@ class ProductView(View):
 
 class ProductDetailView(View):
     def get(self, request, product):
-        if Product.objects.filter(id=product).exists():
+        if not Product.objects.filter(id=product).exists():
             return JsonResponse({'message':'NOT_FOUND'}, status=404)
+        
         product      = Product.objects.get(id=product)
         images       = product.image_set.all()
         descriptions = product.description_set.all()
