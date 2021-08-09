@@ -51,20 +51,34 @@ class CartView(View):
 from users.utils  import LoginDecorator
 from .models      import User, Product, Cart
 
+<<<<<<< HEAD
 
 class CartView(View):
     @LoginDecorator
     def delete(self,request,cart_id):
+=======
+	@LoginDecorator
+	def delete(self,request,cart_id):
+>>>>>>> 0cb7524 (모델링 수정 (description_image 칼럼 추가),)
         
-        if not Cart.objects.filter(id = cart_id).exists():
-            return JsonResponse({'message': 'NOT_FOUND'}, status = 404)
+		if not Cart.objects.filter(id = cart_id).exists():
+			return JsonResponse({'message': 'NOT_FOUND'}, status = 404)
 
-        if Cart.objects.get(id=cart_id).user_id != request.user.id:
-            return JsonResponse({'message':'INVALED_USER'}, status=403)
+		if Cart.objects.get(id=cart_id).user_id != request.user.id:
+			return JsonResponse({'message':'INVALED_USER'}, status=403)
 
+<<<<<<< HEAD
         if Cart.objects.get(id = cart_id).delete():
             return JsonResponse({'message': 'SUCCESS'}, status = 200)
     
     
             
+<<<<<<< HEAD
 >>>>>>> 59a0e54e37dc179adbb3e30755f8cc516210d1aa
+=======
+>>>>>>> 9ce9051810cfc45e4a75a6114dfe7e3a1d419b5e
+=======
+		if Cart.objects.get(id = cart_id).delete():
+			return JsonResponse({'message': 'SUCCESS'}, status = 200)        
+>>>>>>> 0cb7524 (모델링 수정 (description_image 칼럼 추가),)
+>>>>>>> a6fc452 (모델링 수정 (description_image 칼럼 추가),)
