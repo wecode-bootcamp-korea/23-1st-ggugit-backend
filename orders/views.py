@@ -18,11 +18,11 @@ class CartView(View):
 
 		product = Product.objects.get(id=data['product_id'])
 
-		cart, flag = Cart.objects.get_or_create(product=product, user=user, quantity=data['quantity'])
-		if not flag:
-			cart.quantity += data['quantity']
-			cart.save()
-			return JsonResponse({'message':'ADD_SUCCESS'},status=200)
+		cart, created = Cart.objects.get_or_create(product=product, user=user, quantity=data['quantity'])
+		if not created:
+		    cart.quantity += data['quantity']
+		    cart.save()
+		    return JsonResponse({'message':'ADD_SUCCESS'},status=200)
 		return JsonResponse({'message' : 'SUCCESS'}, status=200)
 
 	@LoginDecorator
