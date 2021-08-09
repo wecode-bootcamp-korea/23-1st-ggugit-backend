@@ -120,7 +120,8 @@ class ProductView(View):
                 'name'         : product.name,
                 'image_url'    : [image.image_url for image in product.image_set.all()],
                 'cooking_time' : product.cooking_time,
-                'price'        : product.price,
+                'price'        : round(product.price),
+                'discount'     : round(int(product.price)*0.9),
                 'limited'      : product.event_set.first().limited,
                 'new'          : product.event_set.first().new,
                 'sales'        : product.sales,
@@ -161,8 +162,8 @@ class ProductDetailView(View):
         
         product      = Product.objects.get(id=product)
         images       = product.image_set.all()
-        descriptions = product.description_set.all()
-        tastes       = product.taste_set.all()
+        descriptions = product.description_set.first()
+        tastes       = product.taste_set.first()
 
         results = [{
             'name'         : product.name,
@@ -171,10 +172,13 @@ class ProductDetailView(View):
             'discount'     : round(int(product.price)* 0.9),
             'cooking_time' : product.cooking_time,
             'image'        : [product.image_url for product in images],
-            'description'  :[{'description_image': product.image_url for product in descriptions},
-                             {'description_text': product.text for product in descriptions}],
-            'taste'        : [product.name for product in tastes],
+            'description_image'  :{'description_image1': descriptions.image_url_1,
+                                    'description_image2' : descriptions.image_url_2,
+                                    'description_image3' : descriptions.image_url_3},
+            'description_text' :  descriptions.text,
+            'taste'        : tastes.name
         }]
+
         return JsonResponse({'result':results}, status=200)
         
 >>>>>>> f774d90 (Add: productdetail views작성4)
