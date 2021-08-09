@@ -3,10 +3,10 @@ import json
 from django.http  import JsonResponse
 from django.views import View
 
-from users.models	   import User
-from products.models   import Product
-from orders.models     import Cart
-from users.utils 	   import LoginDecorator 
+from users.models    import User
+from products.models import Product
+from orders.models   import Cart
+from users.utils     import LoginDecorator 
 
 class CartView(View):
 	@LoginDecorator
@@ -34,7 +34,7 @@ class CartView(View):
 			return JsonResponse({'message' : 'NO_CART'}, status=200)
 		
 		results=[{
-		"name" 	   : cart.product.name,
+		"name"     : cart.product.name,
 		"price"    : round(cart.product.price),
 		"discount" : round(int(cart.product.price) * 0.9) ,
 		"quantity" : cart.quantity} for cart in carts]
