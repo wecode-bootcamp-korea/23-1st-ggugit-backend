@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 import json
+=======
+import json, jwt
+>>>>>>> 59a0e54e37dc179adbb3e30755f8cc516210d1aa
 
 from django.http  import JsonResponse
 from django.views import View
 
+<<<<<<< HEAD
 from users.models    import User
 from products.models import Product
 from orders.models   import Cart
@@ -42,3 +47,24 @@ class CartView(View):
 		return JsonResponse({'results': results}, status=200)
 					
 
+=======
+from users.utils  import LoginDecorator
+from .models      import User, Product, Cart
+
+
+class CartView(View):
+    @LoginDecorator
+    def delete(self,request,cart_id):
+        
+        if not Cart.objects.filter(id = cart_id).exists():
+            return JsonResponse({'message': 'NOT_FOUND'}, status = 404)
+
+        if Cart.objects.get(id=cart_id).user_id != request.user.id:
+            return JsonResponse({'message':'INVALED_USER'}, status=403)
+
+        if Cart.objects.get(id = cart_id).delete():
+            return JsonResponse({'message': 'SUCCESS'}, status = 200)
+    
+    
+            
+>>>>>>> 59a0e54e37dc179adbb3e30755f8cc516210d1aa
