@@ -48,9 +48,11 @@ class Image(models.Model):
         db_table = 'images'
 
 class Description(models.Model):
-    image_url  = models.URLField()
-    text       = models.TextField(max_length=1000)
-    product    = models.ForeignKey('Product', on_delete=models.CASCADE)
+    image_url_1  = models.URLField()
+    image_url_2  = models.URLField()
+    image_url_3  = models.URLField()
+    text         = models.TextField(max_length=1000)
+    product      = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'descriptions'
