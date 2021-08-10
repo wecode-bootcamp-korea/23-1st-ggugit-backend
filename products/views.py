@@ -9,22 +9,14 @@ class ProductView(View):
         theme  = request.GET.get('theme', None) #type or taste
         number = request.GET.get('number',1)
         order  = request.GET.get('order',1)
+        main = request.GET.get('main', None)
         try:
             products = Product.objects.all()
-            filter_taste = {
-                1 : '매콤한맛',
-                2 : '짭짤한맛',
-                3 : '새콤한맛',
-                4 : '느끼한맛',
-                5 : '담백한맛'
-            }
-            filter_type = {
-                1 : '한식',
-                2 : '중식',
-                3 : '일식',
-                4 : '양식',
-                5 : '기타'
-            }
+
+            filter_taste = {taste.id : taste.name for taste in Taste.objects.all()}
+            
+            filter_type = {type.id : type.name for type in Type.objects.all()}
+            
             order_number = {
                 1 : '-created_at',
                 2 : '-sales',
@@ -37,6 +29,10 @@ class ProductView(View):
             if theme == 'type':
                 type     = Type.objects.get(name=filter_type[int(number)])
                 products = Product.objects.filter(type=type)
+            if main :
+                tastes = Taste.objects.all()
+                return JsonResponse({'results':[{'id': taste.id, 'taste' : taste.name }for taste in tastes] })
+
             products = products.order_by(order_number[int(order)])
             results = [{
                 'id'           : product.id,
@@ -55,11 +51,11 @@ class ProductView(View):
         return JsonResponse({'results':results}, status=200)
 
 class ProductDetailView(View):
-    def get(self, request, product):
-        if not Product.objects.filter(id=product).exists():
+    def get(self, request, product_id):
+        if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'message':'NOT_FOUND'}, status=404)
         
-        product      = Product.objects.get(id=product)
+        product      = Product.objects.get(id=product_id)
         images       = product.image_set.all()
         descriptions = product.description_set.get()
         tastes       = product.taste_set.get()
