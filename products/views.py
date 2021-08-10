@@ -33,7 +33,7 @@ class ProductView(View):
             }
             if theme == 'taste':
                 taste    = Taste.objects.get(name=filter_taste[int(number)])
-                products = Product.objects.filter(producttaste__taste_id=taste.id)
+                products = Product.objects.filter(producttaste__taste=taste)
             if theme == 'type':
                 type     = Type.objects.get(name=filter_type[int(number)])
                 products = Product.objects.filter(type=type)
@@ -45,10 +45,11 @@ class ProductView(View):
                 'cooking_time' : product.cooking_time,
                 'price'        : round(product.price),
                 'discount'     : round(int(product.price)*0.9),
-                'limited'      : product.event_set.first().limited,
-                'new'          : product.event_set.first().new,
+                'limited'      : product.event_set.get().limited,
+                'new'          : product.event_set.get().new,
                 'sales'        : product.sales,
-                'taste'        : product.taste_set.first().name} for product in products]
+                'taste'        : product.taste_set.get().name,
+                'stock'        : product.stock} for product in products]
         except ObjectDoesNotExist:
             return JsonResponse({'message':'NOT_FOUND'}, status = 404)
         return JsonResponse({'results':results}, status=200)
@@ -60,22 +61,24 @@ class ProductDetailView(View):
         
         product      = Product.objects.get(id=product)
         images       = product.image_set.all()
-        descriptions = product.description_set.first()
-        tastes       = product.taste_set.first()
+        descriptions = product.description_set.get()
+        tastes       = product.taste_set.get()
 
         results = [{
-            'name'         : product.name,
-            'sub_name'     : product.sub_name,
-            'price'        : round(product.price),
-            'discount'     : round(int(product.price)* 0.9),
-            'cooking_time' : product.cooking_time,
-            'image'        : [product.image_url for product in images],
-            'description_image'  :{'description_image1': descriptions.image_url_1,
+            'id'          : product.id,
+            'name'        : product.name,
+            'sub_name'    : product.sub_name,
+            'price'       : round(product.price),
+            'discount'    : round(int(product.price)* 0.9),
+            'cooking_time': product.cooking_time,
+            'image_url'       : [product.image_url for product in images],
+            'description_image': {'description_image1' : descriptions.image_url_1,
                                     'description_image2' : descriptions.image_url_2,
                                     'description_image3' : descriptions.image_url_3},
             'description_text' :  descriptions.text,
-            'taste'        : tastes.name
+            'taste'        : tastes.name,
+            'stock'        : product.stock
         }]
 
-        return JsonResponse({'result':results}, status=200)
+        return JsonResponse({'results':results}, status=200)
         
