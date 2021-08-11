@@ -12,7 +12,18 @@ from django.views           import View
 from django.core.exceptions import ObjectDoesNotExist
 >>>>>>> c8a3d8e (Add: productdetail views2)
 
-from products.models        import Product, Type, Taste
+from products.models        import Product, Type, Taste, MainPage
+
+class MainView(View):
+    def get(self, request):
+        main_pages   = MainPage.objects.all()
+        first_pages  = main_pages.order_by('id')[:6]
+        second_pages = main_pages.order_by('id')[6:12]
+
+        result1 = [a.image_url for a in first_pages]
+        result2 = [a.image_url for a in second_pages]
+
+        return JsonResponse({'result1':result1, 'result2':result2}, status = 200)
 
 class ProductView(View):
 <<<<<<< HEAD
@@ -43,8 +54,10 @@ class ProductView(View):
         theme  = request.GET.get('theme', None) #type or taste
         number = request.GET.get('number',1)
         order  = request.GET.get('order',1)
+        main   = request.GET.get('main', None)
         try:
             products = Product.objects.all()
+<<<<<<< HEAD
             filter_taste = {
                 1 : '매콤한맛',
                 2 : '짭짤한맛',
@@ -64,11 +77,21 @@ class ProductView(View):
 =======
             }
 >>>>>>> f53abbd (Add: productdetail views작성4)
+=======
+
+            filter_taste = {taste.id : taste.name for taste in Taste.objects.all()}
+            filter_type = {type.id : type.name for type in Type.objects.all()}
+<<<<<<< HEAD
+            
+>>>>>>> 2e13ceb (상품목록 : 쿼리 파라미터 main 추가 , 하드코딩 수정)
+=======
+>>>>>>> a72d787 (products 모델 수정 (description 관련))
             order_number = {
                 1 : '-created_at',
                 2 : '-sales',
                 3 : '-price',
                 4 : 'price',
+<<<<<<< HEAD
 <<<<<<< HEAD
 			}
 <<<<<<< HEAD
@@ -106,14 +129,21 @@ class ProductView(View):
         
 =======
 =======
+=======
+                5 : '-stock',
+>>>>>>> 84aa383 (Add: 메인이미지 배너)
             }
 >>>>>>> f774d90 (Add: productdetail views작성4)
             if theme == 'taste':
                 taste    = Taste.objects.get(name=filter_taste[int(number)])
-                products = Product.objects.filter(producttaste__taste_id=taste.id)
+                products = Product.objects.filter(producttaste__taste=taste)
             if theme == 'type':
                 type     = Type.objects.get(name=filter_type[int(number)])
                 products = Product.objects.filter(type=type)
+            if main :
+                tastes = Taste.objects.all()
+                return JsonResponse({'results':[{'id': taste.id, 'taste' : taste.name }for taste in tastes] })
+
             products = products.order_by(order_number[int(order)])
             results = [{
                 'id'           : product.id,
@@ -122,15 +152,19 @@ class ProductView(View):
                 'cooking_time' : product.cooking_time,
                 'price'        : round(product.price),
                 'discount'     : round(int(product.price)*0.9),
-                'limited'      : product.event_set.first().limited,
-                'new'          : product.event_set.first().new,
+                'limited'      : product.event_set.get().limited,
+                'new'          : product.event_set.get().new,
                 'sales'        : product.sales,
-                'taste'        : product.taste_set.first().name} for product in products]
+                'taste'        : product.taste_set.get().name,
+                'stock'        : product.stock} for product in products]
         except ObjectDoesNotExist:
             return JsonResponse({'message':'NOT_FOUND'}, status = 404)
+        except KeyError :
+            return JsonResponse({'message': 'Key_Error'}, status = 400)
         return JsonResponse({'results':results}, status=200)
 
 class ProductDetailView(View):
+<<<<<<< HEAD
     def get(self, request, product):
 <<<<<<< HEAD
         if Product.objects.filter(id=product).exists():
@@ -158,27 +192,34 @@ class ProductDetailView(View):
 =======
         if not Product.objects.filter(id=product).exists():
 >>>>>>> a0369f0 (Add: productdetail views작성4)
+=======
+    def get(self, request, product_id):
+        if not Product.objects.filter(id=product_id).exists():
+>>>>>>> d4b4c81 (상품목록 : 쿼리 파라미터 main 추가 , 하드코딩 수정)
             return JsonResponse({'message':'NOT_FOUND'}, status=404)
         
-        product      = Product.objects.get(id=product)
-        images       = product.image_set.all()
-        descriptions = product.description_set.first()
-        tastes       = product.taste_set.first()
+        product     = Product.objects.get(id=product_id)
+        images      = product.image_set.all()
+        taste       = product.taste_set.get()
 
         results = [{
-            'name'         : product.name,
-            'sub_name'     : product.sub_name,
-            'price'        : round(product.price),
-            'discount'     : round(int(product.price)* 0.9),
-            'cooking_time' : product.cooking_time,
-            'image'        : [product.image_url for product in images],
-            'description_image'  :{'description_image1': descriptions.image_url_1,
-                                    'description_image2' : descriptions.image_url_2,
-                                    'description_image3' : descriptions.image_url_3},
-            'description_text' :  descriptions.text,
-            'taste'        : tastes.name
+            'id'                : product.id,
+            'name'              : product.name,
+            'sub_name'          : product.sub_name,
+            'price'             : round(product.price),
+            'discount'          : round(int(product.price)* 0.9),
+            'cooking_time'      : product.cooking_time,
+            'image_url'         : [product.image_url for product in images],
+            'taste'             : taste.name,
+            'stock'             : product.stock,
+            'description_text'  : product.description.text,
+            'description_images': {
+                'first_image' : product.description.image_url_1,
+                'second_image': product.description.image_url_2,
+                'third_image' : product.description.image_url_3
+                },
         }]
 
-        return JsonResponse({'result':results}, status=200)
+        return JsonResponse({'results':results}, status=200)
         
 >>>>>>> f774d90 (Add: productdetail views작성4)
