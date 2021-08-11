@@ -69,10 +69,12 @@ class ProductView(View):
 =======
 
             filter_taste = {taste.id : taste.name for taste in Taste.objects.all()}
-            
             filter_type = {type.id : type.name for type in Type.objects.all()}
+<<<<<<< HEAD
             
 >>>>>>> 2e13ceb (상품목록 : 쿼리 파라미터 main 추가 , 하드코딩 수정)
+=======
+>>>>>>> a72d787 (products 모델 수정 (description 관련))
             order_number = {
                 1 : '-created_at',
                 2 : '-sales',
@@ -142,6 +144,8 @@ class ProductView(View):
                 'stock'        : product.stock} for product in products]
         except ObjectDoesNotExist:
             return JsonResponse({'message':'NOT_FOUND'}, status = 404)
+        except KeyError :
+            return JsonResponse({'message': 'Key_Error'}, status = 400)
         return JsonResponse({'results':results}, status=200)
 
 class ProductDetailView(View):
@@ -179,10 +183,9 @@ class ProductDetailView(View):
 >>>>>>> d4b4c81 (상품목록 : 쿼리 파라미터 main 추가 , 하드코딩 수정)
             return JsonResponse({'message':'NOT_FOUND'}, status=404)
         
-        product      = Product.objects.get(id=product_id)
-        images       = product.image_set.all()
-        descriptions = product.description_set.get()
-        tastes       = product.taste_set.get()
+        product     = Product.objects.get(id=product_id)
+        images      = product.image_set.all()
+        taste       = product.taste_set.get()
 
         results = [{
             'id'          : product.id,
@@ -192,11 +195,13 @@ class ProductDetailView(View):
             'discount'    : round(int(product.price)* 0.9),
             'cooking_time': product.cooking_time,
             'image_url'       : [product.image_url for product in images],
-            'description_image': {'description_image1' : descriptions.image_url_1,
-                                    'description_image2' : descriptions.image_url_2,
-                                    'description_image3' : descriptions.image_url_3},
-            'description_text' :  descriptions.text,
-            'taste'        : tastes.name,
+            'description_images': {
+             'first_image'  : product.description.image_url_1,
+             'second_image' : product.description.image_url_2,
+             'third_image'  : product.description.image_url_3
+            },
+            'description_text' :  product.description.text,
+            'taste'        : taste.name,
             'stock'        : product.stock
         }]
 
