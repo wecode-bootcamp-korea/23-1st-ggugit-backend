@@ -55,7 +55,7 @@ class CartView(View):
 		cart   = Cart.objects.get(id=cart_id)
 		if stocks < cart.quantity + data['quantity']:
 			return JsonResponse({'message':'OUT_OF_STOCK'},status = 400)
-		if Cart.objects.get(id=cart_id).user_id != user.id:
+		if cart.user_id != user.id:
 			return JsonResponse({'message':'INVALED_USER'}, status=403)
 		cart.quantity += data['quantity']
 		cart.save()
