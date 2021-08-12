@@ -5,5 +5,4 @@ urlpatterns = [
     path('/main', MainView.as_view()),
     path('', ProductView.as_view()),
     path('/<int:product_id>', ProductDetailView.as_view()),
-    path('/search',ProductView.as_view())
 ]
