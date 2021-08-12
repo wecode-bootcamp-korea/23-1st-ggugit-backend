@@ -21,6 +21,8 @@ class ProductView(View):
         number = request.GET.get('number',1)
         order  = request.GET.get('order',1)
         main   = request.GET.get('main', None)
+        search = request.GET.get('KeyWord', None)
+
         try:
             products = Product.objects.all()
 
@@ -42,6 +44,10 @@ class ProductView(View):
             if main :
                 tastes = Taste.objects.all()
                 return JsonResponse({'results':[{'id': taste.id, 'taste' : taste.name }for taste in tastes] })
+            if search :
+                products = Product.objects.filter(name__icontains=search)
+            else :
+                return JsonResponse({'message':'NO_KEYWORD'}, status=400)
 
             products = products.order_by(order_number[int(order)])
             results = [{
@@ -59,7 +65,7 @@ class ProductView(View):
         except ObjectDoesNotExist:
             return JsonResponse({'message':'NOT_FOUND'}, status = 404)
         except KeyError :
-            return JsonResponse({'message': 'Key_Error'}, status = 400)
+            return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
         return JsonResponse({'results':results}, status=200)
 
 class ProductDetailView(View):
@@ -88,28 +94,4 @@ class ProductDetailView(View):
                 'third_image' : product.description.image_url_3
                 },
         }]
-        return JsonResponse({'results':results}, status=200)
-              
-class SearchView(View):
-    def get(self, request):
-        search = request.GET.get('KeyWord', None)
-        
-        if not search:
-            return JsonResponse({'message':'no_keyword'}, status=400)
-
-        products = Product.objects.filter(name__icontains=search)
-    
-        results = [{
-                'id'           : product.id,
-                'name'         : product.name,
-                'image_url'    : [image.image_url for image in product.image_set.all()],
-                'cooking_time' : product.cooking_time,
-                'price'        : round(product.price),
-                'discount'     : round(int(product.price)*0.9),
-                'limited'      : product.event_set.get().limited,
-                'new'          : product.event_set.get().new,
-                'sales'        : product.sales,
-                'taste'        : product.taste_set.get().name,
-                'stock'        : product.stock} for product in products]
-
         return JsonResponse({'results':results}, status=200)
