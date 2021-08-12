@@ -51,20 +51,55 @@ class CartView(View):
 from users.utils  import LoginDecorator
 from .models      import User, Product, Cart
 
+<<<<<<< HEAD
 
 class CartView(View):
     @LoginDecorator
     def delete(self,request,cart_id):
+=======
+	@LoginDecorator
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	def patch(self,request,cart_id):
+		data   = json.loads(request.body)
+		user   = request.user
+		stocks = Product.objects.get(id = data['product_id']).stock
+		cart   = Cart.objects.get(id=cart_id)
+		if stocks < cart.quantity + data['quantity']:
+			return JsonResponse({'message':'OUT_OF_STOCK'},status = 400)
+		if cart.user_id != user.id:
+			return JsonResponse({'message':'INVALED_USER'}, status=403)
+		cart.quantity += data['quantity']
+		cart.save()
+		return JsonResponse({'message':'SUCCESS'}, status = 201)
+
+	@LoginDecorator
+	def delete(self,request,cart_id):
+>>>>>>> 391dd2f (장바구니 patch 추가)
+=======
+>>>>>>> 1475178 (장바구니 patch 수정)
+	def delete(self,request,cart_id):
+>>>>>>> 0cb7524 (모델링 수정 (description_image 칼럼 추가),)
         
-        if not Cart.objects.filter(id = cart_id).exists():
-            return JsonResponse({'message': 'NOT_FOUND'}, status = 404)
+		if not Cart.objects.filter(id = cart_id).exists():
+			return JsonResponse({'message': 'NOT_FOUND'}, status = 404)
 
-        if Cart.objects.get(id=cart_id).user_id != request.user.id:
-            return JsonResponse({'message':'INVALED_USER'}, status=403)
+		if Cart.objects.get(id=cart_id).user_id != request.user.id:
+			return JsonResponse({'message':'INVALED_USER'}, status=403)
 
+<<<<<<< HEAD
         if Cart.objects.get(id = cart_id).delete():
             return JsonResponse({'message': 'SUCCESS'}, status = 200)
     
     
             
+<<<<<<< HEAD
 >>>>>>> 59a0e54e37dc179adbb3e30755f8cc516210d1aa
+=======
+>>>>>>> 9ce9051810cfc45e4a75a6114dfe7e3a1d419b5e
+=======
+		if Cart.objects.get(id = cart_id).delete():
+			return JsonResponse({'message': 'SUCCESS'}, status = 200)        
+>>>>>>> 0cb7524 (모델링 수정 (description_image 칼럼 추가),)
+>>>>>>> a6fc452 (모델링 수정 (description_image 칼럼 추가),)
