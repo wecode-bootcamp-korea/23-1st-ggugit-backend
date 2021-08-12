@@ -2,14 +2,25 @@ from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ObjectDoesNotExist
 
-from products.models        import Product, Type, Taste
+from products.models        import Product, Type, Taste, MainPage
+
+class MainView(View):
+    def get(self, request):
+        main_pages   = MainPage.objects.all()
+        first_pages  = main_pages.order_by('id')[:6]
+        second_pages = main_pages.order_by('id')[6:12]
+
+        first_banner  = [first_page.image_url for first_page in first_pages]
+        second_banner = [second_page.image_url for second_page in second_pages]
+
+        return JsonResponse({'result1':first_banner, 'result2':second_banner}, status = 200)
 
 class ProductView(View):
     def get(self, request):
         theme  = request.GET.get('theme', None) #type or taste
         number = request.GET.get('number',1)
         order  = request.GET.get('order',1)
-        main = request.GET.get('main', None)
+        main   = request.GET.get('main', None)
         try:
             products = Product.objects.all()
 
@@ -20,6 +31,7 @@ class ProductView(View):
                 2 : '-sales',
                 3 : '-price',
                 4 : 'price',
+                5 : '-stock',
             }
             if theme == 'taste':
                 taste    = Taste.objects.get(name=filter_taste[int(number)])
@@ -60,22 +72,23 @@ class ProductDetailView(View):
         taste       = product.taste_set.get()
 
         results = [{
-            'id'          : product.id,
-            'name'        : product.name,
-            'sub_name'    : product.sub_name,
-            'price'       : round(product.price),
-            'discount'    : round(int(product.price)* 0.9),
-            'cooking_time': product.cooking_time,
-            'image_url'       : [product.image_url for product in images],
+            'id'                : product.id,
+            'name'              : product.name,
+            'sub_name'          : product.sub_name,
+            'price'             : round(product.price),
+            'discount'          : round(int(product.price)* 0.9),
+            'cooking_time'      : product.cooking_time,
+            'image_url'         : [product.image_url for product in images],
+            'taste'             : taste.name,
+            'stock'             : product.stock,
+            'description_text'  : product.description.text,
             'description_images': {
-             'first_image'  : product.description.image_url_1,
-             'second_image' : product.description.image_url_2,
-             'third_image'  : product.description.image_url_3
-            },
-            'description_text' :  product.description.text,
-            'taste'        : taste.name,
-            'stock'        : product.stock
+                'first_image' : product.description.image_url_1,
+                'second_image': product.description.image_url_2,
+                'third_image' : product.description.image_url_3
+                },
         }]
-
         return JsonResponse({'results':results}, status=200)
+
+        
         
