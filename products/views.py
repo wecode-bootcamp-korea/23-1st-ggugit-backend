@@ -1,5 +1,5 @@
-from django.http            import JsonResponse
-from django.views           import View
+from django.http             import JsonResponse
+from django.views            import View
 from django.core.exceptions import ObjectDoesNotExist
 
 from products.models        import Product, Type, Taste, MainPage
@@ -89,6 +89,27 @@ class ProductDetailView(View):
                 },
         }]
         return JsonResponse({'results':results}, status=200)
+              
+class SearchView(View):
+    def get(self, request):
+        search = request.GET.get('KeyWord', None)
+        
+        if not search:
+            return JsonResponse({'message':'no_keyword'}, status=400)
 
-        
-        
+        products = Product.objects.filter(name__icontains=search)
+    
+        results = [{
+                'id'           : product.id,
+                'name'         : product.name,
+                'image_url'    : [image.image_url for image in product.image_set.all()],
+                'cooking_time' : product.cooking_time,
+                'price'        : round(product.price),
+                'discount'     : round(int(product.price)*0.9),
+                'limited'      : product.event_set.get().limited,
+                'new'          : product.event_set.get().new,
+                'sales'        : product.sales,
+                'taste'        : product.taste_set.get().name,
+                'stock'        : product.stock} for product in products]
+
+        return JsonResponse({'results':results}, status=200)
