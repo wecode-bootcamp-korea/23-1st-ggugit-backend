@@ -20,10 +20,10 @@ class MainView(View):
         first_pages  = main_pages.order_by('id')[:6]
         second_pages = main_pages.order_by('id')[6:12]
 
-        result1 = [a.image_url for a in first_pages]
-        result2 = [a.image_url for a in second_pages]
+        first_banner  = [first_page.image_url for first_page in first_pages]
+        second_banner = [second_page.image_url for second_page in second_pages]
 
-        return JsonResponse({'result1':result1, 'result2':result2}, status = 200)
+        return JsonResponse({'result1':first_banner, 'result2':second_banner}, status = 200)
 
 class ProductView(View):
 <<<<<<< HEAD
@@ -219,7 +219,8 @@ class ProductDetailView(View):
                 'third_image' : product.description.image_url_3
                 },
         }]
-
         return JsonResponse({'results':results}, status=200)
+
+        
         
 >>>>>>> f774d90 (Add: productdetail views작성4)
