@@ -10,7 +10,6 @@ from .models      import User, Product, Cart
 class CartView(View):
     @LoginDecorator
     def post(self,request):
-        print
         data     = json.loads(request.body)
         user     = request.user
         quantity = data['quantity']
@@ -20,7 +19,7 @@ class CartView(View):
         product = Product.objects.get(id=data['product_id'])
 
         if product.stock < quantity:
-            return JsonResponse({'message':'no_stock'}, status=400)
+            return JsonResponse({'message':'NO_STOCK'}, status=400)
 
         cart, created = Cart.objects.get_or_create(product=product, user=user, defaults = {'quantity' : quantity})
         if not created:
@@ -40,11 +39,13 @@ class CartView(View):
             return JsonResponse({'message' : 'NO_CART'}, status=400)
         
         results=[{
-        "name"      : cart.product.name,
-        "price"     : round(cart.product.price),
-        "discount"  : round(int(cart.product.price) * 0.9),
-        "image_url" : [image.image_url for image in cart.product.image_set.all()],
-        "quantity"  : cart.quantity} for cart in carts]
+        "cart_id"    : cart.id,
+        "product_id" : cart.product.id,
+        "name"       : cart.product.name,
+        "price"      : round(cart.product.price),
+        "discount"   : round(int(cart.product.price) * 0.9),
+        "image_url"  : cart.product.image_set.get().image_url,
+        "quantity"   : cart.quantity} for cart in carts]
 
         return JsonResponse({'results': results}, status=200)
 
