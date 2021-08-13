@@ -43,7 +43,60 @@ class CartView(View):
 		"price"    : round(cart.product.price),
 		"discount" : round(int(cart.product.price) * 0.9) ,
 		"quantity" : cart.quantity} for cart in carts]
+<<<<<<< HEAD
 
+=======
+=======
+    @LoginDecorator
+    def post(self,request):
+        data     = json.loads(request.body)
+        user     = request.user
+        quantity = data['quantity']
+        if not Product.objects.filter(id=data['product_id']).exists():
+            return JsonResponse({'message' : 'NOT_FOUND'}, status=400)
+
+        product = Product.objects.get(id=data['product_id'])
+
+        if product.stock < quantity:
+            return JsonResponse({'message':'NO_STOCK'}, status=400)
+
+        cart, created = Cart.objects.get_or_create(product=product, user=user, defaults = {'quantity' : quantity})
+        if not created:
+            if product.stock < quantity + cart.quantity:
+                return JsonResponse({'message':'no_stock'}, status=400)
+            cart.quantity += data['quantity']
+            cart.save()
+            return JsonResponse({'message':'ADD_SUCCESS'},status=200)
+        return JsonResponse({'message' : 'SUCCESS'}, status=200)
+
+    @LoginDecorator
+    def get(self, request):
+        user  = request.user
+        carts = Cart.objects.filter(user=user)
+        
+        if not carts.exists():
+            return JsonResponse({'message' : 'NO_CART'}, status=400)
+        
+        results=[{
+<<<<<<< HEAD
+        "name"      : cart.product.name,
+        "price"     : round(cart.product.price),
+        "discount"  : round(int(cart.product.price) * 0.9),
+        "image_url" : [image.image_url for image in cart.product.image_set.all()],
+        "quantity"  : cart.quantity} for cart in carts]
+>>>>>>> f64812b (Add: 장바구니 이미지 추가)
+=======
+        "cart_id"    : cart.id,
+        "product_id" : cart.product.id,
+        "name"       : cart.product.name,
+        "price"      : round(cart.product.price),
+        "discount"   : round(int(cart.product.price) * 0.9),
+        "image_url"  : cart.product.image_set.get().image_url,
+        "quantity"   : cart.quantity} for cart in carts]
+>>>>>>> 468fa89 (Add: 장바구니 이미지 추가 및 id 추가)
+
+<<<<<<< HEAD
+>>>>>>> fbef7ea (Add: 장바구니 이미지 추가 및 id 추가)
 		return JsonResponse({'results': results}, status=200)
 					
 
