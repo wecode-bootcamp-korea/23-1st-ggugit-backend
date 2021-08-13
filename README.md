@@ -25,8 +25,8 @@
 
 ### 적용 기술
 
-Back-End : Python, Django web framework, Bcrypt, My SQL, JWT
-Common : AWS(EC2,RDS), RESTful API
+> - Back-End : Python, Django web framework, Bcrypt, My SQL, JWT
+> - Common : AWS(EC2,RDS), RESTful API
 
 
 ### 구현 기능
