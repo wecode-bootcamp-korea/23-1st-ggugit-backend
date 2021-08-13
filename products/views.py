@@ -13,7 +13,7 @@ class MainView(View):
         first_banner  = [first_page.image_url for first_page in first_pages]
         second_banner = [second_page.image_url for second_page in second_pages]
 
-        return JsonResponse({'result1':first_banner, 'result2':second_banner}, status=200)
+        return JsonResponse({'first_banner':first_banner, 'second_banner':second_banner}, status=200)
 
 class ProductView(View):
     def get(self, request):
