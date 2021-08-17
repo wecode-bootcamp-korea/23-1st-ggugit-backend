@@ -1,5 +1,5 @@
 ## 1st 클론 프로젝트 
-## Team GGigit Back-end 소개
+## Team GGugit Back-end 소개
 
 -  집밥을 특별하게! 요리키트 배달 서비스 [쿡킷](https://www.cjcookit.com) 클론 프로젝트
 - 짧은 프로젝트 기간동안 개발에 집중해야 하므로 디자인/기획 부분만 클론했습니다.
